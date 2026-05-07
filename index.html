@@ -1194,9 +1194,10 @@ Contoh:
         const normalizedFirst = firstLine.replace(/(?<!\d)\s*\/\s*(?!\d)/g, " - ");
         const parts = normalizedFirst.split(/\s+-\s+/).map(x => x.trim()).filter(Boolean);
 
-        const reHP = /^(\+62|62|08)[\d\s\-]{7,14}$/;
-        const reHPInline = /(\+62[\d\s\-]{8,14}|08[\d\s\-]{8,14})/g;
-        const reLayanan = /home\s+\d*d|home\s+\d+\+\d+|modem\s+second|olt\s+\d+d/i;
+        const reHP = /^(\+62|62|08)[\d\s\-]+$/;
+        const reHPInline = /(\+62[\d\s\-]+|08[\d\s\-]+)/g;
+        const reLayanan = /\b(home|modem|olt)\b/i;
+        const reLayananCapture = /\bhome\s+[0-9oOdD\+\s]+/i;
         const reModem = /\b(BUY|RENT|SECOND)\b/i;
         const reReq = /(\*?(?:req\s+)?jam\s+[\d\.:]+|\*?req\s+jam)/i;
         const reNoise = /^(\*|-|no\s+atribut|no\s+atribute|atribut|atribute|\s*)$/i;
@@ -1212,6 +1213,7 @@ Contoh:
         let nama = null;
         const hp = [];
         const alamat = [];
+        let layananPart = null;
         let layanan = null;
         let req = null;
 
@@ -1224,7 +1226,7 @@ Contoh:
           }
 
           if (reLayanan.test(part)) {
-            layanan = part;
+            layananPart = part;
             return;
           }
 
@@ -1260,14 +1262,28 @@ Contoh:
         const hpStr = hp.join(" / ") || "-";
 
         let modem = "-";
-        if (layanan) {
-          const mMatch = layanan.match(reModem);
+        if (layananPart) {
+          const mMatch = layananPart.match(reModem);
           if (mMatch) modem = mMatch[1].toUpperCase();
-          const lMatch = layanan.match(/(home\s+[\w\+\s]+(?:buy|rent|second)?|modem\s+second)/i);
-          if (lMatch) layanan = lMatch[0].trim();
+
+          const lMatch = layananPart.match(reLayananCapture) || layananPart.match(/\bolt\s+\d+d/i);
+          if (lMatch) {
+            layanan = lMatch[0].trim();
+          } else {
+            layanan = layananPart
+              .replace(/\bmodem\b/i, "")
+              .replace(reModem, "")
+              .replace(/[\*\-]+/g, "")
+              .replace(/\s+/g, " ")
+              .trim();
+          }
+
+          if (!layanan) {
+            layanan = "-";
+          }
         }
-        if (modem === "-" && layanan) {
-          const mMatch2 = (layanan + " " + firstLine).match(reModem);
+        if (modem === "-" && layananPart) {
+          const mMatch2 = (layananPart + " " + firstLine).match(reModem);
           if (mMatch2) modem = mMatch2[1].toUpperCase();
         }
         if (layanan === null) layanan = "-";
