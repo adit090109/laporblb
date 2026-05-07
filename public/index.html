@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Biznet Jadwal">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>Biznet Blimbing - Jadwal Installer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: 'var(--background)',
+            foreground: 'var(--foreground)',
+            card: 'var(--card)',
+            'card-foreground': 'var(--card-foreground)',
+            primary: 'var(--primary)',
+            'primary-foreground': 'var(--primary-foreground)',
+            secondary: 'var(--secondary)',
+            'secondary-foreground': 'var(--secondary-foreground)',
+            muted: 'var(--muted)',
+            'muted-foreground': 'var(--muted-foreground)',
+            accent: 'var(--accent)',
+            'accent-foreground': 'var(--accent-foreground)',
+            border: 'var(--border)',
+            input: 'var(--input)',
+            ring: 'var(--ring)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --background: #ffffff;
+      --foreground: #0a0a0a;
+      --card: #ffffff;
+      --card-foreground: #0a0a0a;
+      --primary: #0a0a0a;
+      --primary-foreground: #fafafa;
+      --secondary: #f5f5f5;
+      --secondary-foreground: #171717;
+      --muted: #f5f5f5;
+      --muted-foreground: #737373;
+      --accent: #f5f5f5;
+      --accent-foreground: #171717;
+      --border: #e5e5e5;
+      --input: #e5e5e5;
+      --ring: #0a0a0a;
+      --success: #22c55e;
+      --success-foreground: #ffffff;
+      --warning: #f59e0b;
+      --warning-foreground: #ffffff;
+      --radius: 0.75rem;
+    }
+
+    .dark {
+      --background: #09090b;
+      --foreground: #fafafa;
+      --card: #18181b;
+      --card-foreground: #fafafa;
+      --primary: #fafafa;
+      --primary-foreground: #18181b;
+      --secondary: #27272a;
+      --secondary-foreground: #fafafa;
+      --muted: #27272a;
+      --muted-foreground: #a1a1aa;
+      --accent: #27272a;
+      --accent-foreground: #fafafa;
+      --border: #27272a;
+      --input: #27272a;
+      --ring: #d4d4d8;
+      --success: #22c55e;
+      --success-foreground: #ffffff;
+      --warning: #f59e0b;
+      --warning-foreground: #ffffff;
+    }
+
+    * {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    html.no-transition, html.no-transition *, html.no-transition *::before, html.no-transition *::after {
+      transition: none !important;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+    }
+
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      padding: 0.5rem 1rem;
+      border-radius: calc(var(--radius) - 2px);
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+      padding: 0.5rem 1rem;
+      border-radius: calc(var(--radius) - 2px);
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .btn-secondary:hover {
+      opacity: 0.8;
+    }
+
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--foreground);
+      padding: 0.5rem 1rem;
+      border-radius: calc(var(--radius) - 2px);
+      transition: background-color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background-color: var(--accent);
+    }
+
+    .input-field {
+      background-color: var(--background);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 2px);
+      padding: 0.5rem 0.75rem;
+      color: var(--foreground);
+      width: 100%;
+    }
+
+    .input-field:focus {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .badge-success {
+      background-color: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    .badge-warning {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .badge-muted {
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 50;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast-success {
+      background-color: #22c55e;
+      color: white;
+    }
+
+    .toast-error {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .tab-active {
+      background-color: var(--background);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .schedule-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .schedule-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toast-message"></span>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-sm">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-semibold text-lg">Biznet Blimbing</h1>
+          <p class="text-xs text-muted-foreground">Jadwal Installer</p>
+        </div>
+      </div>
+      <button id="theme-toggle" class="btn-ghost p-2 rounded-lg">
+        <svg id="icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    <!-- Tabs -->
+    <div class="flex gap-1 p-1 rounded-lg bg-muted mb-6 max-w-xs">
+      <button id="tab-input" class="flex-1 px-4 py-2 text-sm font-medium rounded-md tab-active" onclick="switchTab('input')">
+        Input
+      </button>
+      <button id="tab-history" class="flex-1 px-4 py-2 text-sm font-medium rounded-md text-muted-foreground" onclick="switchTab('history')">
+        Riwayat
+      </button>
+    </div>
+
+    <!-- Input Tab -->
+    <div id="panel-input">
+      <!-- Paste Area -->
+      <div class="card p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold">Paste Jadwal</h2>
+          <span id="char-count" class="text-xs text-muted-foreground">0 karakter</span>
+        </div>
+        <textarea 
+          id="raw-input" 
+          class="input-field min-h-[150px] mono text-sm"
+          placeholder="Paste teks jadwal dari grup WhatsApp di sini..."
+          oninput="updateCharCount()"
+        ></textarea>
+        <div class="flex gap-2 mt-4">
+          <button class="btn-primary flex items-center gap-2" onclick="parseSchedule()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Parse Data
+          </button>
+          <button class="btn-secondary" onclick="clearInput()">Clear</button>
+        </div>
+      </div>
+
+      <!-- Parsed Results -->
+      <div id="parsed-results" class="hidden">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold">Hasil Parsing</h2>
+          <span id="result-count" class="badge badge-muted">0 data</span>
+        </div>
+        
+        <div id="schedule-cards" class="space-y-3 mb-6"></div>
+
+        <!-- Selected Form -->
+        <div id="form-panel" class="card p-6 hidden">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="font-semibold">Edit Data</h3>
+            <button class="btn-ghost p-1 rounded" onclick="closeForm()">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-medium mb-1.5">ID Aktivitas</label>
+              <input type="text" id="form-idAktivitas" class="input-field mono" readonly>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1.5">Nama Pelanggan</label>
+              <input type="text" id="form-namaPelanggan" class="input-field">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1.5">No HP</label>
+              <input type="text" id="form-noHp" class="input-field">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1.5">Kode DP</label>
+              <input type="text" id="form-kodeDP" class="input-field mono">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium mb-1.5">Alamat</label>
+              <input type="text" id="form-alamat" class="input-field">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1.5">Paket</label>
+              <input type="text" id="form-paket" class="input-field">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1.5">Catatan</label>
+              <input type="text" id="form-catatan" class="input-field">
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button class="btn-primary flex items-center gap-2" onclick="generateReport()">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Generate Report
+            </button>
+            <button class="btn-secondary flex items-center gap-2" onclick="copyReport()">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+              Copy
+            </button>
+          </div>
+
+          <!-- Report Preview -->
+          <div id="report-preview" class="mt-6 hidden">
+            <label class="block text-sm font-medium mb-1.5">Preview Report</label>
+            <pre id="report-text" class="input-field mono text-sm whitespace-pre-wrap p-4 bg-muted"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div id="panel-history" class="hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold">Riwayat Report</h2>
+        <button id="clear-history-btn" class="btn-ghost text-sm text-red-500 hidden" onclick="clearHistory()">
+          Hapus Semua
+        </button>
+      </div>
+      
+      <div id="history-list" class="space-y-3">
+        <div class="card p-8 text-center text-muted-foreground">
+          <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p>Belum ada riwayat report</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-border mt-12">
+    <div class="max-w-5xl mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
+      Biznet Blimbing Scheduler &copy; 2024
+    </div>
+  </footer>
+
+  <script>
+    // Kode DP Database
+    const kodeDPDatabase = {
+      'ODCBBI': 'GG. LEBAR INDAH',
+      'ODCBBJ': 'SULFAT UTARA',
+      'ODCBBK': 'CANDI PANGGUNG',
+      'ODCBBL': 'KLAYATAN 3',
+      'ODCBBM': 'GADANG',
+      'ODCBBN': 'BANDULAN',
+      'ODCBBO': 'PANDANWANGI',
+      'ODCBBP': 'SULFAT SELATAN',
+      'ODCBBQ': 'PUNCAK DIENG',
+      'ODCBBR': 'BURING',
+      'ODCBBS': 'SAXOFONE',
+      'ODCBBT': 'BUKIT DIENG',
+      'ODCBBU': 'CANDI 1',
+      'ODCBBV': 'CANDI 2',
+      'ODCBBW': 'SIMP CANDI',
+      'ODCBBX': 'TIDAR',
+      'ODCBBY': 'PIRANHA',
+      'ODCBBZ': 'GALUNGGUNG',
+      'ODCBCA': 'WENDIT',
+      'ODCBCB': 'LESANPURO'
+    };
+
+    // State
+    let parsedData = [];
+    let selectedIndex = -1;
+    let history = [];
+    let isDark = true;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load theme
+      document.documentElement.classList.add('no-transition');
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      isDark = stored ? stored === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+      updateThemeIcon();
+      
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.documentElement.classList.remove('no-transition');
+        });
+      });
+
+      // Load history
+      loadHistory();
+    });
+
+    // Theme Toggle
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.classList.toggle('dark', isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateThemeIcon();
+    });
+
+    function updateThemeIcon() {
+      document.getElementById('icon-sun').classList.toggle('hidden', isDark);
+      document.getElementById('icon-moon').classList.toggle('hidden', !isDark);
+    }
+
+    // Tab switching
+    function switchTab(tab) {
+      const isInput = tab === 'input';
+      document.getElementById('panel-input').classList.toggle('hidden', !isInput);
+      document.getElementById('panel-history').classList.toggle('hidden', isInput);
+      document.getElementById('tab-input').classList.toggle('tab-active', isInput);
+      document.getElementById('tab-input').classList.toggle('text-muted-foreground', !isInput);
+      document.getElementById('tab-history').classList.toggle('tab-active', !isInput);
+      document.getElementById('tab-history').classList.toggle('text-muted-foreground', isInput);
+    }
+
+    // Character count
+    function updateCharCount() {
+      const len = document.getElementById('raw-input').value.length;
+      document.getElementById('char-count').textContent = len + ' karakter';
+    }
+
+    // Clear input
+    function clearInput() {
+      document.getElementById('raw-input').value = '';
+      updateCharCount();
+      parsedData = [];
+      selectedIndex = -1;
+      document.getElementById('parsed-results').classList.add('hidden');
+    }
+
+    // Parse schedule
+    function parseSchedule() {
+      const text = document.getElementById('raw-input').value.trim();
+      if (!text) {
+        showToast('Masukkan teks jadwal terlebih dahulu', 'error');
+        return;
+      }
+
+      parsedData = parseRawText(text);
+      
+      if (parsedData.length === 0) {
+        showToast('Tidak ada data yang berhasil di-parse', 'error');
+        return;
+      }
+
+      renderScheduleCards();
+      document.getElementById('parsed-results').classList.remove('hidden');
+      document.getElementById('result-count').textContent = parsedData.length + ' data';
+      showToast('Berhasil parsing ' + parsedData.length + ' data', 'success');
+    }
+
+    // Parse raw text
+    function parseRawText(text) {
+      const results = [];
+      const blocks = text.split(/\n\s*\n/);
+      
+      for (const block of blocks) {
+        const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+        if (lines.length < 3) continue;
+
+        const data = {
+          idAktivitas: '',
+          namaPelanggan: '',
+          noHp: '',
+          alamat: '',
+          paket: '',
+          kodeDP: '',
+          namaDP: '',
+          catatan: ''
+        };
+
+        for (const line of lines) {
+          // ID Aktivitas
+          const idMatch = line.match(/ID[:\s]*(\d+)/i);
+          if (idMatch) data.idAktivitas = idMatch[1];
+
+          // Nama pelanggan
+          const namaMatch = line.match(/(?:NAMA|Pelanggan)[:\s]*(.+)/i);
+          if (namaMatch) data.namaPelanggan = namaMatch[1].trim();
+
+          // No HP
+          const hpMatch = line.match(/(?:HP|TELP|NO\.?\s*HP)[:\s]*([\d\s\-+]+)/i);
+          if (hpMatch) data.noHp = hpMatch[1].replace(/\s/g, '');
+
+          // Alamat
+          const alamatMatch = line.match(/(?:ALAMAT|ALM)[:\s]*(.+)/i);
+          if (alamatMatch) data.alamat = alamatMatch[1].trim();
+
+          // Paket
+          const paketMatch = line.match(/(?:PAKET|PKT)[:\s]*(.+)/i);
+          if (paketMatch) data.paket = paketMatch[1].trim();
+
+          // Kode DP
+          const dpMatch = line.match(/(ODCB[A-Z]{2})/i);
+          if (dpMatch) {
+            data.kodeDP = dpMatch[1].toUpperCase();
+            data.namaDP = kodeDPDatabase[data.kodeDP] || '';
+          }
+
+          // Catatan
+          const catatanMatch = line.match(/(?:CATATAN|NOTE|KET)[:\s]*(.+)/i);
+          if (catatanMatch) data.catatan = catatanMatch[1].trim();
+        }
+
+        if (data.idAktivitas || data.namaPelanggan) {
+          results.push(data);
+        }
+      }
+
+      return results;
+    }
+
+    // Render schedule cards
+    function renderScheduleCards() {
+      const container = document.getElementById('schedule-cards');
+      container.innerHTML = parsedData.map((item, index) => `
+        <div class="card schedule-card p-4 cursor-pointer hover:bg-accent/50 transition-colors ${selectedIndex === index ? 'ring-2 ring-ring' : ''}" onclick="selectCard(${index})">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="mono text-xs text-muted-foreground">#${item.idAktivitas || '-'}</span>
+                ${item.kodeDP ? `<span class="badge badge-success">${item.kodeDP}</span>` : ''}
+              </div>
+              <h3 class="font-medium truncate">${item.namaPelanggan || 'Nama tidak tersedia'}</h3>
+              <p class="text-sm text-muted-foreground truncate">${item.alamat || 'Alamat tidak tersedia'}</p>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="text-sm font-medium">${item.paket || '-'}</p>
+              <p class="text-xs text-muted-foreground mono">${item.noHp || '-'}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Select card
+    function selectCard(index) {
+      selectedIndex = index;
+      renderScheduleCards();
+      
+      const item = parsedData[index];
+      document.getElementById('form-idAktivitas').value = item.idAktivitas;
+      document.getElementById('form-namaPelanggan').value = item.namaPelanggan;
+      document.getElementById('form-noHp').value = item.noHp;
+      document.getElementById('form-kodeDP').value = item.kodeDP;
+      document.getElementById('form-alamat').value = item.alamat;
+      document.getElementById('form-paket').value = item.paket;
+      document.getElementById('form-catatan').value = item.catatan;
+      
+      document.getElementById('form-panel').classList.remove('hidden');
+      document.getElementById('report-preview').classList.add('hidden');
+    }
+
+    // Close form
+    function closeForm() {
+      selectedIndex = -1;
+      renderScheduleCards();
+      document.getElementById('form-panel').classList.add('hidden');
+    }
+
+    // Update form data
+    function updateFormData() {
+      if (selectedIndex < 0) return;
+      
+      parsedData[selectedIndex] = {
+        ...parsedData[selectedIndex],
+        namaPelanggan: document.getElementById('form-namaPelanggan').value,
+        noHp: document.getElementById('form-noHp').value,
+        kodeDP: document.getElementById('form-kodeDP').value,
+        alamat: document.getElementById('form-alamat').value,
+        paket: document.getElementById('form-paket').value,
+        catatan: document.getElementById('form-catatan').value
+      };
+      
+      const kode = parsedData[selectedIndex].kodeDP.toUpperCase();
+      parsedData[selectedIndex].namaDP = kodeDPDatabase[kode] || '';
+    }
+
+    // Generate report
+    function generateReport() {
+      updateFormData();
+      const item = parsedData[selectedIndex];
+      
+      const now = new Date();
+      const tanggal = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const waktu = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      const report = `📋 *REPORT INSTALASI*
+━━━━━━━━━━━━━━━━━━
+
+📅 Tanggal: ${tanggal}
+🕐 Waktu: ${waktu}
+
+👤 *Data Pelanggan*
+• ID: ${item.idAktivitas}
+• Nama: ${item.namaPelanggan}
+• HP: ${item.noHp}
+• Alamat: ${item.alamat}
+
+📦 *Detail Layanan*
+• Paket: ${item.paket}
+• Kode DP: ${item.kodeDP}
+• Nama DP: ${item.namaDP || '-'}
+
+📝 Catatan: ${item.catatan || '-'}
+
+━━━━━━━━━━━━━━━━━━
+✅ *Status: SELESAI*`;
+
+      document.getElementById('report-text').textContent = report;
+      document.getElementById('report-preview').classList.remove('hidden');
+
+      // Save to history
+      saveToHistory({
+        ...item,
+        report,
+        timestamp: now.toISOString()
+      });
+    }
+
+    // Copy report
+    function copyReport() {
+      const report = document.getElementById('report-text').textContent;
+      if (!report) {
+        showToast('Generate report terlebih dahulu', 'error');
+        return;
+      }
+      
+      navigator.clipboard.writeText(report).then(() => {
+        showToast('Report berhasil disalin!', 'success');
+      }).catch(() => {
+        showToast('Gagal menyalin report', 'error');
+      });
+    }
+
+    // History functions
+    function loadHistory() {
+      const stored = localStorage.getItem('biznet_history');
+      history = stored ? JSON.parse(stored) : [];
+      renderHistory();
+    }
+
+    function saveToHistory(item) {
+      history.unshift(item);
+      if (history.length > 50) history = history.slice(0, 50);
+      localStorage.setItem('biznet_history', JSON.stringify(history));
+      renderHistory();
+      showToast('Report tersimpan ke riwayat', 'success');
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('history-list');
+      const clearBtn = document.getElementById('clear-history-btn');
+      
+      if (history.length === 0) {
+        clearBtn.classList.add('hidden');
+        container.innerHTML = `
+          <div class="card p-8 text-center text-muted-foreground">
+            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p>Belum ada riwayat report</p>
+          </div>
+        `;
+        return;
+      }
+
+      clearBtn.classList.remove('hidden');
+      container.innerHTML = history.map((item, index) => {
+        const date = new Date(item.timestamp);
+        return `
+          <div class="card p-4">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="mono text-xs text-muted-foreground">#${item.idAktivitas}</span>
+                  <span class="badge badge-success">${item.kodeDP || '-'}</span>
+                </div>
+                <h3 class="font-medium">${item.namaPelanggan}</h3>
+                <p class="text-xs text-muted-foreground">${date.toLocaleDateString('id-ID')} ${date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+              <button class="btn-ghost p-2 rounded" onclick="copyHistoryReport(${index})">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function copyHistoryReport(index) {
+      const item = history[index];
+      navigator.clipboard.writeText(item.report).then(() => {
+        showToast('Report berhasil disalin!', 'success');
+      }).catch(() => {
+        showToast('Gagal menyalin report', 'error');
+      });
+    }
+
+    function clearHistory() {
+      if (!confirm('Hapus semua riwayat?')) return;
+      history = [];
+      localStorage.removeItem('biznet_history');
+      renderHistory();
+      showToast('Riwayat berhasil dihapus', 'success');
+    }
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toast.className = 'toast toast-' + type + ' show';
+      toastMessage.textContent = message;
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('SW registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('SW registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
